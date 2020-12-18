@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head><title>节点字段配置</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" id="bpm_theme" type="text/css" href="../../easyui/newtheme/bule/devclient.css">
+    <script type="text/javascript" src="../../jscode/lang/zh_CN.js"></script>
+    <script type="text/javascript" src="../../easyui/jquery.min.js"></script>
+    <script type="text/javascript" src="../../easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../../jscode/sharefunction.js"></script>
+    <script type="text/javascript" src="../../jscode/json.js"></script>
+    <script type="text/javascript" src="../../jscode/viewgrid.js"></script>
+    <script>
+        var FormNum = "", GridNum = "V_S002_E003";
+        WF_Appid = "S029";
+
+        $(function(){
+            $('#dg').datagrid({
+                url: "../../../../rule?wf_num=getButtonConfig&Processid="+ GetUrlArg("Processid") +"&Nodeid="+GetUrlArg("Nodeid"),
+            });
+            $('#dg').datagrid('load');
+
+        })
+
+        function formatlink(v, r) {
+            return "<a href='' onclick=\"RowDblClick(0,'" + r.WF_OrUnid + "');return false;\" >" + v + "</a>";
+        }
+
+        function GroupFormat(value, rows) {
+            return value + ' - ' + rows.length + ' 项';
+        }
+
+        $(window).resize(function () {
+            $('#dg').datagrid('resize', {
+                width: function () {
+                    return document.body.clientWidth;
+                }, height: function () {
+                    return document.body.clientHeight;
+                }
+            });
+        });
+
+        function saveEditorGrid() {
+            //获得所有修改的数据
+            stopEditRow();
+            EditorGridSave($('#dg'));
+        }
+
+        function insertRow() {
+            //插入新行
+            stopEditRow();
+            var i = $('#dg').datagrid('getData').rows.length;
+            $('#dg').datagrid('insertRow', {index: i, row: {}});
+        }
+
+        function removeSelectedRow() {
+            //删除选中行
+            stopEditRow();
+            var rows = $('#dg').datagrid('getSelections');
+            if (!rows || rows.length == 0) {
+                $.messager.alert('提示', '请选择要删除的字段!', 'info');
+                return;
+            }
+            $.messager.confirm('Confirm', '您确定要删除选中字段吗?', function (r) {
+                if (r) {
+                    var dg = $('#dg');
+                    $.each(rows, function (i, row) {
+                        var index = dg.datagrid('getRowIndex', row);
+                        dg.datagrid('deleteRow', index);
+                    });
+
+                    saveConfig();
+                }
+            });
+
+
+        }
+
+        var lastIndex;
+
+        function RowClick(rowIndex) {
+            //单击进行修改
+            $("#dg").datagrid('unselectAll');
+            $("#dg").datagrid('selectRow', rowIndex);
+            if (lastIndex != rowIndex) {
+                $('#dg').datagrid('endEdit', lastIndex);
+                $('#dg').datagrid('beginEdit', rowIndex);
+            }
+            lastIndex = rowIndex;
+        }
+
+        function stopEditRow() {
+            $('#dg').datagrid('endEdit', lastIndex);
+            lastIndex = undefined;
+        }
+
+
+        /**
+         * 保存字段设置
+         * add by alibao 20201021
+         */
+        function saveConfig() {
+
+            $('#dg').datagrid('acceptChanges');
+            var rowdata = $('#dg').datagrid('getData');
+            var j = 0;
+            var postdata = {};
+
+/*            if(rowdata.rows.length < 1){
+                alert("请填写字段配置！");
+                return;
+            }*/
+
+            postdata.total = rowdata.rows.length;
+            postdata.rows = rowdata.rows;
+            postdata = JSON.stringify(postdata);
+
+            var Processid = GetUrlArg("Processid");
+            var Nodeid = GetUrlArg("Nodeid");
+
+            $.post("../../../../rule", {Processid: Processid, Nodeid: Nodeid, nodeButtonConfig: postdata,wf_num:"setButtonConfig"},
+                function (data) {
+                    alert(data.msg);
+                });
+        }
+
+
+    </script>
+</head>
+<body>
+<div class="toptoolbar" id="toptoolbar"> - <a href="#" id="btnSave" class="easyui-linkbutton" plain="true"
+                                              data-options="iconCls:'icon-add'"
+                                              onclick="saveConfig();return false;">保存设置</a> - <a href="#" id="btnNew"
+                                                                                                 class="easyui-linkbutton"
+                                                                                                 plain="true"
+                                                                                                 data-options="iconCls:'icon-add'"
+                                                                                                 onclick="insertRow();return false;">新增字段</a>
+    - <a href="#" id="btnDel"
+         class="easyui-linkbutton"
+         plain="true"
+         data-options="iconCls:'icon-remove'"
+         onclick="removeSelectedRow();return false;">删除字段</a>
+</div>
+<!-- ../../../../rule?wf_num=R_S002_B009&wf_gridnum=V_S002_E003&WF_Action=edit&WF_DocUnid=ae771bac0a44604d1008458086488180cece&Processid=292731a50828d04d8c0831b08feda690a91d&Nodeid=T00002&NodeType=userTask&WF_Appid=S029&rdm='+Math.random() -->
+<table id="dg" class="easyui-datagrid"
+       data-options="toolbar:toptoolbar,fit:true,autoRowHeight:false,remoteSort:false,border:false,rownumbers: true,fitColumns:true,singleSelect:false,multiSort:true,onDblClickRow:stopEditRow,onClickRow:RowClick,onRowContextMenu:stopEditRow,pageSize:25,pageList:[20,25,30,40,60],url:''">
+    <thead>
+    <tr>
+        <th data-options="checkbox:true"></th>
+
+        <th data-options="field:'NodeRule',width:120,sortable:true,align:'center',editor:{type:'combobox',options:{
+              url:'../../../../rule?wf_num=getALLActionConfig',
+              valueField:'Actionid',
+              textField:'ActionName'
+         }}">按钮类型(名称)
+        </th>
+        <th data-options="field:'Actionid',width:100,sortable:true,align:'center'">动作引擎(只读)</th>
+        <th data-options="field:'buttonId',width:100,sortable:true,editor:'text',align:'center'">按钮id</th>
+        <th data-options="field:'customName',width:120,sortable:true,editor:'text',align:'center'">自定义名称</th>
+        <th data-options="field:'sort',width:50,sortable:true,editor:'text',align:'center'">排序号</th>
+    </thead>
+</table>
+<div id="win"></div>
+</body>
+</html>

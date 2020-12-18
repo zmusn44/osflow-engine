@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>节点属性</title> 
+  <meta charset="UTF-8" /> 
+  <link rel="stylesheet" type="text/css" href="../../easyui/themes/gray/easyui.css" /> 
+  <link rel="stylesheet" type="text/css" href="../../easyui/themes/icon.css" /> 
+  <link rel="stylesheet" type="text/css" href="../../css/app_openform.css" /> 
+  
+  <script type="text/javascript" src="../../easyui/jquery.min.js"></script> 
+  <script type="text/javascript" src="../../easyui/jquery.easyui.min.js"></script> 
+  <script type="text/javascript" src="../../jscode/sharefunction.js"></script> 
+  <script type="text/javascript" src="../../jscode/app_openform.js"></script> 
+  <script>function formonload() {
+	  var Nodeid = GetUrlArg("Nodeid");
+	  $("#Nodeid").html(Nodeid);
+	  $('#event').attr("src","../view/userTaskEventView.html?WF_Action=edit&WF_DocUnid=&Processid="+ GetUrlArg("Processid") +"&Nodeid="+ GetUrlArg("Nodeid") +"&NodeType="+ GetUrlArg("ExtNodeType") +"&WF_Appid=S029")
+  	  $('#iframe_nodeMal').attr("src","../view/EmailSetting.html?WF_Action=edit&WF_DocUnid=&Processid="+ GetUrlArg("Processid") +"&Nodeid="+ GetUrlArg("Nodeid") +"&NodeType="+ GetUrlArg("ExtNodeType") +"&WF_Appid=S029")
+
+	  // 节点按钮字段配置
+	  $('#iframe_buttonMal').attr("src","./handleConfig.html?WF_Action=edit&WF_DocUnid=&Processid="+ GetUrlArg("Processid") +"&Nodeid="+ GetUrlArg("Nodeid") +"&NodeType="+ GetUrlArg("ExtNodeType") +"&WF_Appid=S029")
+
+
+	  $.ajax({
+          async:false,
+          type:"post",
+          url:"../../../../rule?wf_num=getFlowChartModByNodeType&Processid="+GetUrlArg("Processid") + "&Nodeid=" + GetUrlArg("Nodeid"),
+          dataType:"json",
+          success:function(data){
+        	  for(var key in data['基本属性']){
+       		  	if(key === 'UsePostOwner'){
+  	    			if(data['基本属性'][key]==='1') $("input[name='UsePostOwner'][value='1']").prop("checked",true);
+  	    			else $("input[name='UsePostOwner'][value='1']").prop("checked",false);
+  	    		}
+       		 	if(key === 'IsSequential'){
+	    			if(data['基本属性'][key]==='1') $("input[name='IsSequential'][value='1']").prop("checked",true);
+	    			else $("input[name='IsSequential'][value='1']").prop("checked",false);
+	    		}
+       			if(key === 'NoUserAutoFlag'){
+	    			if(data['基本属性'][key]==='1') $("input[name='NoUserAutoFlag'][value='1']").prop("checked",true);
+	    			else $("input[name='NoUserAutoFlag'][value='1']").prop("checked",false);
+	    		}
+       			if(key === 'SelfAutoFlag'){
+	    			if(data['基本属性'][key]==='1') $("input[name='SelfAutoFlag'][value='1']").prop("checked",true);
+	    			else $("input[name='SelfAutoFlag'][value='1']").prop("checked",false);
+	    		}
+       			if(key === 'LoopType'){
+ 		　　　		$(":radio[name='"+key+"'][value='" +data['基本属性'][key]+ "']").prop("checked", "checked");
+ 		　　　		continue;
+		　　　	}
+   		　　　	$('#'+key).val(data['基本属性'][key]);
+      		　}
+          }
+      });
+  }
+  function myBrowser() {
+	    var userAgent = navigator.userAgent;
+	    var isOpera = userAgent.indexOf("Opera") > -1;
+	    if (isOpera) {
+	        return "Opera"
+	    };
+	    if (userAgent.indexOf("Firefox") > -1) {
+	        return "FF";
+	    }
+	    if (userAgent.indexOf("Chrome") > -1) {
+	        return "Chrome";
+	    }
+	    if (userAgent.indexOf("Safari") > -1) {
+	        return "Safari";
+	    }
+	    if ( !! window.ActiveXObject || "ActiveXObject" in window) {
+	        if (navigator.appVersion.split(";")[1].replace(/[ ]/g, "") == "MSIE10.0") {
+	            return "IE10"
+	        }
+	        return "IE"
+	    };
+	}
+	function SaveDocument(btnAction) {
+	    var map = {};
+	    if(!$("#NodeName").val()){
+	    	$("#NodeName").next().show();
+	    	$("#tabs").tabs("select",0);
+	    	return false;
+	    }else {
+	    	$("#NodeName").next().hide();
+	    }
+	    $("input").each(function(){
+	        var input = $(this);
+	        if(input.attr("id")!==undefined)
+	        map[input.attr("id")] = input.val();
+	    });
+	    map['MobileJson'] = $('#MobileJson').val();
+	    map['IsSequential'] = $("input[name='IsSequential']").prop("checked")?"1":"0";
+	    map['NoUserAutoFlag'] = $("input[name='NoUserAutoFlag']").prop("checked")?"1":"0";
+	    map['UsePostOwner'] = $("input[name='UsePostOwner']").prop("checked")?"1":"0";
+	    map['SelfAutoFlag'] = $("input[name='SelfAutoFlag']").prop("checked")?"1":"0";
+	    map['LoopType'] = $('input[name="LoopType"]:checked').val();
+	    var postData = {
+	    	"json":JSON.stringify(map)
+	    }
+	    mask();
+	    $.post("../../../../rule?wf_num=saveFlowChartModByNodeType&Processid="+GetUrlArg("Processid") + "&Nodeid=" + GetUrlArg("Nodeid")+ "&ExtNodeType=" + GetUrlArg("ExtNodeType"),
+   			postData, function(data) {
+	        unmask();
+	        if (data.Status == "error") {
+	            $.messager.alert("Info", data.msg, "Error");
+	        } else {
+	            var NodeName = $("#NodeName").val();
+	            var Nodeid = GetUrlArg("Nodeid");
+	            if (Nodeid != "Process") {
+	                if (opener) {
+	                    opener.SetPropertyVal(Nodeid, NodeName);
+	                } else {
+	                    window.dialogArguments.SetPropertyVal(Nodeid, NodeName);
+	                }
+	            }
+	            if (btnAction == "quit") {
+	                window.close();
+	            }
+	        }
+	    });
+	}
+	$(function() {
+	    $("#tabs").tabs({
+	        onSelect: loadUrl
+	    });
+	    loadUrl();
+	});
+	function loadUrl() {
+	    var tab = $('#tabs').tabs('getSelected');
+	    if (tab == null) {
+	        return false;
+	    }
+	    var url = tab.attr("url");
+	    var id = tab.attr("id");
+	    if ($("#iframe_" + id).attr("src") == "about:blank") {
+	        $("#iframe_" + id).attr("src", url);
+	    }
+	}</script>
+ </head>
+ <body style="margin:0px;overflow:hidden">
+  <div class="easyui-layout" id="panel" fit="true" style="width:100%;"> 
+   <div data-options="region:'north',split:false" border="false" style="height:31px;overflow:hidden"> 
+    <div class="toptoolbar" id="toptoolbar">
+      | 
+     <a href="#" class="easyui-linkbutton" plain="true" data-options="iconCls:'icon-save'" onclick="SaveDocument('quit')">保存退出</a> | 
+     <a href="#" class="easyui-linkbutton" plain="true" data-options="iconCls:'icon-save'" onclick="SaveDocument()">保存</a> | 
+     <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'" onclick="window.close();">关闭</a> 
+    </div> 
+   </div> 
+   <div region="center" border="false" fit="false"> 
+    <div id="tabs" class="easyui-tabs" fit="true" tabposition="left" data-options="showHeader:true,tabHeight:30">
+     <div title="基本属性" id="userTaskAttribute" iconCls=""  style="padding:0px;overflow:hidden">
+     	<table class="linkeytable"><tbody>
+		    <tr class="firstRow">
+		      <td style="word-break: break-all;" valign="middle" width="192" align="right">节点名称</td>
+		      <td style="word-break: break-all;" valign="middle" width="734"><input id="NodeName" name="NodeName" value="" size="40"/><span style="color:red;display:none">该项为必填项</span></td>
+		    </tr>
+		    <tr>
+		      <td style="word-break: break-all;" valign="middle" width="192" align="right">节点id</td>
+		      <td style="word-break: break-all;" valign="middle" width="734">
+				<span id="Nodeid" class="ue_t" name="Nodeid" type="xfield">{Nodeid}
+				</span>
+			</td>
+		    </tr>
+		    <tr>
+		      <td style="word-break: break-all;" valign="middle" width="192" align="right">排序号</td>
+		      <td style="word-break: break-all;" valign="middle" width="734"><input id="SortNum" name="SortNum" value="1001" size="30"/>
+			</td>
+		    </tr>
+		    <tr>
+		      <td valign="middle" rowspan="1" colspan="1" align="right"><br/></td>
+		      <td style="word-break: break-all;" valign="middle" rowspan="1" colspan="1" align="left"><input id="UsePostOwner" name="UsePostOwner" value="1" checked="checked" type="checkbox"/>使用处理单中选择的用户作为参与者</td>
+		    </tr>
+		    <tr id="ApprovalFormOwnerTr">
+		      <td style="word-break: break-all;" valign="middle" rowspan="1" colspan="1" align="right">用户选择范围</td>
+		      <td style="word-break: break-all;" valign="middle" rowspan="1" colspan="1" align="left"><input id="ApprovalFormOwner" name="ApprovalFormOwner" value="" size="30"/></td>
+		    </tr>
+		    <tr>
+		      <td style="word-break: break-all;" valign="middle" width="192" align="right">任务类型</td>
+		      <td style="word-break: break-all;" valign="middle" width="734"><input id="LoopType" name="LoopType" value="1" checked="" type="radio"/>抢占<input  name="LoopType" value="2" type="radio"/>多实例<input  name="LoopType" value="3" type="radio"/>会签</td>
+		    </tr>
+		    <tr>
+		      <td style="word-break: break-all;" valign="middle" width="192" align="right">选项</td>
+		      <td style="word-break: break-all;" valign="middle" width="734"><input id="IsSequential" name="IsSequential" value="1"  type="checkbox"/>按先后顺序串行处理</td>
+		    </tr>
+		    <tr>
+		      <td style="word-break: break-all;" valign="middle" rowspan="1" colspan="1" align="right">自动跳过</td>
+		      <td style="word-break: break-all;" valign="middle" rowspan="1" colspan="1"><input id="NoUserAutoFlag" name="NoUserAutoFlag" value="1" type="checkbox"/>当处理人为空时<input id="SelfAutoFlag" name="SelfAutoFlag" value="1" type="checkbox"/>当处理人为自已时</td>
+		    </tr>
+		</tbody>
+		</table>
+	  </div> 
+	  <div title="事件设置" id="rule" iconCls="icon-event"  style="padding:0px;overflow:hidden">
+     	<iframe id="event" src=""  frameborder="0" style="width:100%;height:100%"></iframe>
+	  </div>
+
+		<div title="按钮配置" id="buttonMal" iconCls=""  style="padding:0px;overflow:hidden">
+			<iframe src="" id="iframe_buttonMal" frameborder="0" style="width:100%;height:100%"></iframe>
+		</div>
+
+		<div title="邮件设置" id="nodeMal" iconCls=""  style="padding:0px;overflow:hidden">
+     	<iframe src="" id="iframe_nodeMal" frameborder="0" style="width:100%;height:100%"></iframe>
+		</div>
+	  <!--<div title="移动设备" id="nodeMal" iconCls=""  style="padding:0px;overflow:hidden">
+     	<table class="linkeytable"><tbody>
+		    <tr>
+		      <td align="right" valign="middle" style="width: 20%;-ms-word-break: break-all;">JSON配置</td>
+		      <td valign="middle" style="-ms-word-break: break-all;"><textarea name="MobileJson" id="MobileJson" style="width: 95%; height: 350px;">[{"FdName":"Subject","FdType":"text","FdVal":"[X]Subject[/X]"},{"FdName":"字段名","FdType":"字段类型","FdVal":"字段值"}]</textarea></td>
+		    </tr>
+		</tbody>
+		</table>
+	  </div> -->
+    </div> 
+   </div>
+  </div>
+ </body>
+</html>

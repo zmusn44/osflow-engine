@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>节点属性</title> 
+  <meta charset="UTF-8" /> 
+  <link rel="stylesheet" type="text/css" href="../../easyui/themes/gray/easyui.css" /> 
+  <link rel="stylesheet" type="text/css" href="../../easyui/themes/icon.css" /> 
+  <link rel="stylesheet" type="text/css" href="../../css/app_openform.css" /> 
+  
+  <script type="text/javascript" src="../../easyui/jquery.min.js"></script> 
+  <script type="text/javascript" src="../../easyui/jquery.easyui.min.js"></script> 
+  <script type="text/javascript" src="../../jscode/sharefunction.js"></script> 
+  <script type="text/javascript" src="../../jscode/app_openform.js"></script> 
+  <script>function formonload() {
+	  var Nodeid = GetUrlArg("Nodeid");
+	  $("#Nodeid").html(Nodeid);
+	  $('#NodeType').html(GetUrlArg("ExtNodeType"));
+	  $('#event').attr("src","../view/businessRuleTaskView.html?WF_Action=edit&WF_DocUnid=&Processid="+ GetUrlArg("Processid") +"&Nodeid="+ GetUrlArg("Nodeid") +"&NodeType="+ GetUrlArg("ExtNodeType") +"&WF_Appid=S029")
+	  $.ajax({
+          async:false,
+          type:"post",
+          url:"../../../../rule?wf_num=getFlowChartModByNodeType&Processid="+GetUrlArg("Processid") + "&Nodeid=" + GetUrlArg("Nodeid"),
+          dataType:"json",
+          success:function(data){
+        	  for(var key in data['基本属性']){
+   		　　　	if(key === 'AllNodeEndStartFlag'){
+	    			if(data['基本属性'][key]==='1') $("input[name='AllNodeEndStartFlag'][value='1']").prop("checked",true);
+	    			else $("input[name='AllNodeEndStartFlag'][value='1']").prop("checked",false);
+	    		}
+   		　　　	if(key === 'SendMailFlag'){
+	    			if(data['基本属性'][key]==='1') $("input[name='SendMailFlag'][value='1']").prop("checked",true);
+	    			else $("input[name='SendMailFlag'][value='1']").prop("checked",false);
+	    		}
+   		　　　	$('#'+key).val(data['基本属性'][key]);
+      		　}
+          }
+      });
+  }
+  function myBrowser() {
+	    var userAgent = navigator.userAgent;
+	    var isOpera = userAgent.indexOf("Opera") > -1;
+	    if (isOpera) {
+	        return "Opera"
+	    };
+	    if (userAgent.indexOf("Firefox") > -1) {
+	        return "FF";
+	    }
+	    if (userAgent.indexOf("Chrome") > -1) {
+	        return "Chrome";
+	    }
+	    if (userAgent.indexOf("Safari") > -1) {
+	        return "Safari";
+	    }
+	    if ( !! window.ActiveXObject || "ActiveXObject" in window) {
+	        if (navigator.appVersion.split(";")[1].replace(/[ ]/g, "") == "MSIE10.0") {
+	            return "IE10"
+	        }
+	        return "IE"
+	    };
+	}
+	function SaveDocument(btnAction) {
+	    //var postData = "Processid="+GetUrlArg("Processid")+"&Nodeid={Nodeid}&QryNodeType="+GetUrlArg("ExtNodeType")+"";
+	    
+	    var map = {};
+	    if(!$("#NodeName").val()){
+	    	$("#NodeName").next().show();
+	    	$("#tabs").tabs("select",0);
+	    	return false;
+	    }else {
+	    	$("#NodeName").next().hide();
+	    }
+	    $("input").each(function(){
+	        var input = $(this);
+	        if(input.attr("id")!==undefined)
+	        map[input.attr("id")] = input.val();
+	    });
+	    map['AllNodeEndStartFlag'] = $("input[name='AllNodeEndStartFlag']").prop("checked")?"1":"0";
+	    map['MailBody'] = $('#MailBody').val();
+	    map['SendMailFlag'] = $("input[name='SendMailFlag']").prop("checked")?"1":"0";
+	    var postData = {
+	    	"json":JSON.stringify(map)
+	    }
+	    mask();
+	    $.post("../../../../rule?wf_num=saveFlowChartModByNodeType&Processid="+GetUrlArg("Processid") + "&Nodeid=" + GetUrlArg("Nodeid")+ "&ExtNodeType=" + GetUrlArg("ExtNodeType"),
+   			postData, function(data) {
+   	        unmask();
+   	        if (data.Status == "error") {
+   	            $.messager.alert("Info", data.msg, "Error");
+   	        } else {
+   	         $.post("../../../../rule?wf_num=saveFlowChartMailConfigByNodeType&Processid="+GetUrlArg("Processid") + "&Nodeid=" + GetUrlArg("Nodeid")+ "&ExtNodeType=" + GetUrlArg("ExtNodeType"),
+   	     			postData, function(data) {
+   	     	        unmask();
+   	     	        if (data.Status == "error") {
+   	     	            $.messager.alert("Info", data.msg, "Error");
+   	     	        } else {
+   	     	        	var NodeName = $("#NodeName").val();
+   	     	            var Nodeid = GetUrlArg("Nodeid");
+   	     	            if (Nodeid != "Process") {
+   	     	                if (opener) {
+   	     	                    opener.SetPropertyVal(Nodeid, NodeName);
+   	     	                } else {
+   	     	                    window.dialogArguments.SetPropertyVal(Nodeid, NodeName);
+   	     	                }
+   	     	            }
+   	     	            if (btnAction == "quit") {
+   	     	                window.close();
+   	     	            }
+   	     	        }
+   	      	});
+   	        }
+   	    });
+	    
+	}
+	$(function() {
+	    $("#tabs").tabs({
+	        onSelect: loadUrl
+	    });
+	    loadUrl();
+	});
+	function loadUrl() {
+	    var tab = $('#tabs').tabs('getSelected');
+	    if (tab == null) {
+	        return false;
+	    }
+	    var url = tab.attr("url");
+	    var id = tab.attr("id");
+	    if ($("#iframe_" + id).attr("src") == "about:blank") {
+	        $("#iframe_" + id).attr("src", url);
+	    }
+	}</script>
+ </head>
+ <body style="margin:0px;overflow:hidden">
+  <div class="easyui-layout" id="panel" fit="true" style="width:100%;"> 
+   <div data-options="region:'north',split:false" border="false" style="height:31px;overflow:hidden"> 
+    <div class="toptoolbar" id="toptoolbar">
+      | 
+     <a href="#" class="easyui-linkbutton" plain="true" data-options="iconCls:'icon-save'" onclick="SaveDocument('quit')">保存退出</a> | 
+     <a href="#" class="easyui-linkbutton" plain="true" data-options="iconCls:'icon-save'" onclick="SaveDocument()">保存</a> | 
+     <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'" onclick="window.close();">关闭</a> 
+    </div> 
+   </div> 
+   <div region="center" border="false" fit="false"> 
+    <div id="tabs" class="easyui-tabs" fit="true" tabposition="left" data-options="showHeader:true,tabHeight:30">
+     <div title="基本属性" id="businessRuleTaskAttr" iconCls=""  style="padding:0px;overflow:hidden">
+     	<table class="linkeytable"><tbody>
+		    <tr class="firstRow">
+		      <td style="word-break: break-all;" valign="middle" rowspan="1" colspan="1" align="right">节点名称</td>
+		      <td valign="middle" rowspan="1" colspan="1" align="left"><input id="NodeName" name="NodeName" value="" size="60"/><span style="color:red;display:none">该项为必填项</span></td>
+		    </tr>
+		    <tr>
+		      <td style="word-break: break-all;" valign="middle" rowspan="1" colspan="1" align="right">节点id</td>
+		      <td style="word-break: break-all;" valign="middle" rowspan="1" colspan="1" align="left">
+		<span id="Nodeid" class="ue_t" name="Nodeid" type="xfield">{xfield}
+		</span>
+		</td>
+		    </tr>
+		    <tr>
+		      <td style="word-break: break-all;" valign="middle" rowspan="1" colspan="1" align="right">节点类型</td>
+		      <td valign="middle" rowspan="1" colspan="1" align="left">
+		<span id="NodeType" name="NodeType" type="xfield">{xfield}
+		</span>
+		</td>
+		    </tr>
+		    <tr>
+		      <td style="word-break: break-all;" valign="middle" rowspan="1" colspan="1" align="left"></td>
+		      <td style="word-break: break-all;" valign="middle" rowspan="1" colspan="1" align="left"><input id="AllNodeEndStartFlag" name="AllNodeEndStartFlag" value="1" type="checkbox"/>所有环节结束后才能启动本环节</td>
+		    </tr>
+		</tbody>
+		</table>
+	  </div> 
+	  <div title="发送邮件" id="businessSendMail" iconCls=""  style="padding:0px;overflow:hidden">
+     	<table class="linkeytable"><tbody>
+		    <tr class="firstRow">
+		      <td width="50" align="right" valign="middle" rowspan="1" colspan="1"></td>
+		      <td align="left" valign="middle" style="-ms-word-break: break-all;" rowspan="1" colspan="1"><input name="SendMailFlag" id="SendMailFlag" type="checkbox" value="1"/>本环节启动后发送邮件</td>
+		    </tr>
+		    <tr>
+		      <td align="right" valign="middle" style="-ms-word-break: break-all;" rowspan="1" colspan="1">标题</td>
+		      <td align="left" valign="middle" rowspan="1" colspan="1"><input name="MailTitle" id="MailTitle" size="65" value="文档:{Subject}已审批结束!"/></td>
+		    </tr>
+		    <tr>
+		      <td align="right" valign="middle" style="-ms-word-break: break-all;" rowspan="1" colspan="1">主送</td>
+   		      <td align="left" valign="middle" rowspan="1" colspan="1"><input name="SendTo" id="SendTo" size="65" value="{WF_EndUser}"/></td>
+		    </tr>
+		    <tr>
+		      <td align="right" valign="middle" style="-ms-word-break: break-all;" rowspan="1" colspan="1">抄送</td>
+		      <td align="left" valign="middle" rowspan="1" colspan="1"><input name="CopyTo" id="CopyTo" size="65" value="{WF_EndUser}"/></td>
+		    </tr>
+		    <tr>
+		      <td align="right" valign="middle" style="-ms-word-break: break-all;" rowspan="1" colspan="1">内容</td>
+		      <td align="left" valign="middle" style="-ms-word-break: break-all;" rowspan="1" colspan="1"><textarea name="MailBody" id="MailBody" style="width: 85%; height: 200px;">标题:{Subject} 
+申请人:{WF_AddName} 
+申请时间:{WF_DocCreated}
+流程:{WF_ProcessName} 
+打开链接:{DOCLINK}</textarea></td>
+		    </tr>
+		</tbody>
+		</table>
+	  </div> 
+	  <div title="事件设置" id="rule" iconCls="icon-event"  style="padding:0px;overflow:hidden">
+     	<iframe id="event" src="" id="iframe_rule" frameborder="0" style="width:100%;height:100%"></iframe>
+	  </div> 
+	  
+    </div> 
+   </div>
+  </div>
+ </body>
+</html>

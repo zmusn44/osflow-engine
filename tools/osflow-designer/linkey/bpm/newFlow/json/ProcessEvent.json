@@ -1,0 +1,42 @@
+[
+    {
+        "Eventid": "DocumentBeforeArchived", 
+        "EventName": "流程归档前"
+    }, 
+    {
+        "Eventid": "DocumentAfterArchived", 
+        "EventName": "流程归档后"
+    }, 
+    {
+        "Eventid": "EngineBeforeOpen", 
+        "EventName": "流程打开前"
+    }, 
+    {
+        "Eventid": "EngineAfterOpen", 
+        "EventName": "流程打开后"
+    }, 
+    {
+        "Eventid": "EngineBeforeRun", 
+        "EventName": "流程运行前"
+    }, 
+    {
+        "Eventid": "EngineAfterRun", 
+        "EventName": "流程运行后"
+    }, 
+    {
+        "Eventid": "InsNodeDocBeforeStart", 
+        "EventName": "节点实际启动前"
+    }, 
+    {
+        "Eventid": "InsNodeDocBeforeEnd", 
+        "EventName": "节点实际结束后"
+    }, 
+    {
+        "Eventid": "EngineRunError", 
+        "EventName": "补偿事件(流程运行出错时)"
+    }, 
+    {
+        "Eventid": "NodeTimeout", 
+        "EventName": "超时触发规则"
+    }
+]

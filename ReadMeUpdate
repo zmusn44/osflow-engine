@@ -1,0 +1,56 @@
+20200924 更新说明
+一、移除workFlowUpdate接口
+1、移除流程引擎运行类主要接口RunWorkFlowImpl中包含workFlowUpdate的构造
+2、移除cn.linkey.workflow.api.workFlowUpdate接口
+3、删除R_S003_P001规则中包含该接口的部分
+4、移除BeanCtx类和ThreadContext类对workFlowUpdate的部分
+
+二、修改RunWorkFlow接口名称
+1、修改RunWorkFlow接口名为WorkFlow接口，以及相关实现类为WorkFlowImpl
+
+三、增加WorkFlow接口声明
+1、增加接口openProcess(String docUnid, String processid, String userid)，主要用于获取表单显示模板和业务数据接口
+2、增加接口getApprovalInfo(String docUnid)，主要用于获取审批过程信息接口
+3、对接口的实现类WorkFlowImpl进行扩展，并初步实现了上述的方法
+
+四、修改规则引擎
+1、修改BeanServer类中，从RuleConfig获取的clazz错误进行修正，并调整其相互调用的引用关系
+2、修改ExecuteEngine类中，调用规则要主要入口函数进行调整为 BeanServer.getBeanByRuleNum(ruleNum);
+3、修改EventEngine类中的注释
+
+五、新增org.example.App类
+1、新增加的类，主要用于在代码中直接可测试流程引擎的各种过程
+2、查询流程信息时，请关闭 app.submitProcess();
+3、对流程进行提交时，请关闭 app.openProcess();和app.getApprovalInfo();
+
+
+
+20200922 更新说明
+一、更新cn.linkey.workflow.util包下所有类的内容
+1、删除假期类
+2、修改DateUtil类中的方法
+3、移除Tools类中大量的无用方法，特别是httpGet/HttpPost
+4、修改XmlParser类
+
+二、更新cn.linkey.workflow.factory包下部分类的内容
+1、移除BeanCtx类中部分无用的方法，与请求相关的
+2、移除BeanCtx类中getSystemConfig方法中对UI的取值部分
+3、移除ThreadContext类中的相关属性以及get/set方法
+4、移除FactoryEngine类
+5、修改ProcessEngine类InsUser类中因移除BeanCtx.g()从URL参数中取值的修正
+
+三、新增以下表及表中的数据
+1、bpm_systemConfig
+
+四、修改规则引擎的类
+1、修改BeanServer类中getBeanByRuleNum(String ruleNum) 和 getBeanByRuleNum(String ruleNum,String clazz)的方法
+getBeanByRuleNum(String ruleNum,String clazz) 方法，添加了多层判断的逻辑，尽最大的努力确保能获取到规则数据的实例
+
+五、修改ORM引擎
+1、删除假期类
+2、删除DateUtil类
+3、删除JdbcUtil类
+4、修改XmlParser类
+5、移除Tools类中大量的无用方法，特别是httpGet/HttpPost
+6、修改SaveDocMYSQL（DBTYPE）类中对当前时间的获取为Tools.getNow()
+7、修改几乎所有类中对以上删除类的引用

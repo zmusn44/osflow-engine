@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>接口设置</title>
+
+		<link rel="stylesheet" href="../layui/css/layui.css" />
+		
+		<style>
+			.inputCla {
+				width: 400px;
+			}
+		</style>
+		
+	</head>
+
+	<body>
+		<div style="width: 90%; margin: 0 auto;">
+			<table class="layui-table" style="text-align: center;">
+				<tr>
+					<td>
+						保存流程图的接口：
+					</td>
+					<td>
+						<input id="save" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						删除节点的接口：
+					</td>
+					<td>
+						<input id="deleteNode" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						缺省保存的接口：
+					</td>
+					<td>
+						<input id="saveAllDefaultNode" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						打开属性框的接口：
+					</td>
+					<td>
+						<input id="setProperty" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						查看审批日志接口：
+					</td>
+					<td>
+						<input id="checkLog" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						查看当前审批用户接口：
+					</td>
+					<td>
+						<input id="currentUser" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						查看已处理用户接口：
+					</td>
+					<td>
+						<input id="publishUser" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						查看子流程文档接口：
+					</td>
+					<td>
+						<input id="checkChildFlow" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						审批用户管理接口：
+					</td>
+					<td>
+						<input id="approveUserManager" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						启动/结束本节点接口：
+					</td>
+					<td>
+						<input id="startEndNode" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						指定处理用户接口：
+					</td>
+					<td>
+						<input id="setNodeUser" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						取消处理用户设置接口：
+					</td>
+					<td>
+						<input id="cancelUserSet" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						指定子流程仿真策略接口：
+					</td>
+					<td>
+						<input id="setSubProcess" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						启动流程仿真接口：
+					</td>
+					<td>
+						<input id="flowSimRun" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						设置路由接口：
+					</td>
+					<td>
+						<input id="setRouter" type="text" placeholder="例：rule?wf_num=R_S018_B030" class="inputCla" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button id="confirmId" class="layui-btn layui-btn-sm">确认</button>
+					</td>
+					<td>
+						<button id="cancerId" class="layui-btn layui-btn-primary layui-btn-sm">取消</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+
+	<script type="text/javascript" src="../js/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="../layui/layui.all.js"></script>
+	<script type="text/javascript" src="../util/StringUtils.js"></script>
+	<script type="text/javascript" src="../util/LayuiUtils.js"></script>
+	
+	<script>
+		var urlConfig = parent.CONFIG.url;
+		
+		$(function() {
+			$("input").each(function() {
+				$(this).val(urlConfig[$(this).attr('id')]);
+			});
+		});
+		
+		// 点击确定
+		$("#confirmId").click(function() {
+			// 更新配置
+			$("input").each(function() {
+				urlConfig[$(this).attr('id')] = $(this).val();
+			});
+			
+			$.ajax({
+			    url: "../../../../rest/flowDesigner/restConfig/update",
+			    type: 'post',
+			    headers: {
+			    	sysid: parent.CONFIG.rest.sysid,
+			    	syspwd: parent.CONFIG.rest.syspwd,
+			    	userId: parent.CONFIG.rest.userId
+			    },
+			    data: urlConfig,
+			    success: function(data) {
+					//console.log(data.msg);
+			    }
+			});
+			
+			// 关闭弹窗
+			closeLayerFrame();
+		});
+		
+		// 点击取消
+		$('#cancerId').click(function() {
+			// 关闭弹窗
+			closeLayerFrame();
+		});
+	</script>
+	
+</html>

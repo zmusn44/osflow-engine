@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>所有流程列表</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel="stylesheet" id="bpm_theme" type="text/css" href="linkey/bpm/easyui/newtheme/bule/devclient.css" />
+  <script type="text/javascript" src="linkey/bpm/jscode/lang/zh_CN.js"></script>
+  <script type="text/javascript" src="linkey/bpm/easyui/jquery.min.js"></script>
+  <script type="text/javascript" src="linkey/bpm/easyui/jquery.easyui.min.js"></script>
+  <script type="text/javascript" src="linkey/bpm/jscode/sharefunction.js"></script>
+  <script type="text/javascript" src="linkey/bpm/jscode/json.js"></script>
+  <script type="text/javascript" src="linkey/bpm/jscode/viewgrid.js"></script> 
+ </head>
+ <body></body>
+</html>
+
+<script>
+ var FormNum="",GridNum="V_FlowDesignerCom_G2";WF_Appid="FlowDesignerCom";
+
+function formatlink(v,r){ return "<a href='' onclick=\"RowDblClick(0,'"+r.WF_OrUnid+"','"+r.UIType+"');return false;\" >"+v+"</a>";}
+function GroupFormat(value,rows){return value + ' - ' + rows.length + ' 项';}
+$(function(){
+	$('#dg').datagrid({
+		url: "./rule?wf_num=getProcessList",
+	});
+	$('#dg').datagrid('load');
+})
+$(window).resize(function(){$('#dg').datagrid('resize', {width:function(){return document.body.clientWidth;},height:function(){return document.body.clientHeight;}});});
+function RowDblClick(rowIndex, rowData){
+    var processid;
+    if(typeof rowData=="string"){processid=rowData;}else{processid=rowData.Processid;}
+    var url="index.html?Processid="+processid;
+     var swidth=screen.availWidth;
+     var sheight=screen.availHeight;
+     var wwidth=swidth-24;
+     var wheight=sheight-80;
+     var wleft=(swidth/2-0)-wwidth/2-5;
+     var wtop=(sheight/2-0)-wheight/2-25;
+  var features ='dialogWidth:'+wwidth+'px;dialogHeight:'+wheight+'px;dialogLeft:'+wleft+';dialogTop:'+wtop+';directories:no; localtion:no; menubar:no; status=no; toolbar=no;scrollbars:no;Resizeable=no;help:0;';
+  //window.showModalDialog(url,window, features );
+  OpenUrl(url);
+}
+
+function RowClick(index){
+  $("#dg").datagrid('unselectAll');
+  $("#dg").datagrid('selectRow',index);
+}
+
+function NewDoc(flowType){
+	$.post("rule?wf_num=getUnid", function(data) {
+		processid = data.Processid;
+		var url="index.html?Processid="+processid + "&FlowType="+flowType;
+		var swidth=screen.availWidth;
+		var sheight=screen.availHeight;
+		var wwidth=swidth-24;
+		var wheight=sheight-80;
+		var wleft=(swidth/2-0)-wwidth/2-5;
+		var wtop=(sheight/2-0)-wheight/2-25;
+		var features ='dialogWidth:'+wwidth+'px;dialogHeight:'+wheight+'px;dialogLeft:'+wleft+';dialogTop:'+wtop+';directories:no; localtion:no; menubar:no; status=no; toolbar=no;scrollbars:no;Resizeable=no;help:0;';
+		// window.showModalDialog(url,window, features );
+		OpenUrl(url);
+	});
+
+}
+
+function DeleteDoc(){
+	var rows = $('#dg').datagrid('getSelections');
+	if (rows.length > 0) {
+	     var ids = []; //ID对象
+	       for (var i = 0; i < rows.length; i++) {
+	           ids.push(rows[i]['WF_OrUnid']);
+	       }
+	       var IDs = ids.join(','); //将ids对象用‘，’连接成字符串
+	   }
+	 $.post("rule?wf_num=deleteProcessList&Processid="+IDs, function(data) {
+	  $('#dg').datagrid('load');
+		});
+}
+
+function CopyDoc(){
+  GridCopyDoc($('#dg'));
+}
+
+function btnClick(btnid){
+    GridBtnClick($('#dg'),btnid);
+}
+function showlink(v,r){ return "<a href='' onclick=\"RowDblClick(0,'"+r.Processid+"');return false;\" >"+v+"</a>";}
+
+function PreviewView(v,r){
+    return "<a href='' onclick=\"window.open('r?wf_num=R_S003_B036&wf_processid="+r.Processid+"');return false;\">启动</a>"   
+}
+function formatProcessForm(v,r){
+    return "<a href='' onclick=\"OpenUrl('designer/editor.jsp?wf_dtype=16&wf_elid="+r.FormNumber+"');return false;\">"+v+"</a>";
+}
+
+function formatStatus(v,r){
+    if(v=="0"){
+        return "<font color=blue>未发布</font>"
+    }else{
+        return "<font color=red>已发布</font>"
+    }
+}
+
+function PackageDoc(){
+    //打包下载
+    var dg=$('#dg');
+    var rows = dg.datagrid('getSelections');
+    if (!rows || rows.length == 0) {$.messager.alert('提示', '请选择要打包的流程!', 'info');return;}
+    
+  $.messager.confirm('Confirm','您确定要打包选中流程吗?',function(r){if (r){
+      mask();
+      var Processid="";
+    $.each(rows, function (i, row) {if(Processid==""){Processid=row.Processid;}else{Processid+=","+row.Processid;}});
+      $.post("rule?wf_num=R_S002_B017",{Processid:Processid,GridNum:GridNum},function(data){
+          data=eval('('+data+')');
+          unmask();
+            if(data.Status=="ok"){
+                var url="rule?wf_num=R_S001_B020&filename="+data.fileName;
+                location.href=url;
+            }else{
+                alert(data.msg);
+            }
+        });
+      
+  }});
+}
+
+function AdvPackage(){
+    var dg=$('#dg');
+    var row=dg.datagrid('getSelected');
+    if (row==null) {$.messager.alert('提示', '请选择要打包的流程!', 'info');return;}
+    var processid=row.Processid;
+    var url="r?wf_num=V_S002_G007&Processid="+processid;
+    $('#win').window({ width:800,height:460,modal:true,title:'打包选项'});
+    $('#win').html("<iframe height='740px' width='100%' frameborder='0' src='"+url+"'></iframe>");
+}
+
+function ImportDoc(){
+    //导入文档
+    $('#win').window({ width:600,height:260,modal:true,title:'导入文档'});
+    $('#win').html("<iframe height='200px' width='100%' frameborder='0' src='form?wf_num=F_S001_A011&WF_Appid="+WF_Appid+"'></iframe>");
+}
+</script>
+</head>
+<body style="margin:0px;">
+<html>
+ <head></head>
+ <body>
+  <div class="toptoolbar" id="toptoolbar">
+   <span style="float:right;padding-right:20px">搜索:<input class="easyui-searchbox" data-options="searcher:GridDoSearch,prompt:'输入关键字后回车...'" id="SearchKeyWord" style="width:150px;" /></span>-
+   <a href="#" id="btnNew" class="easyui-linkbutton" plain="true" data-options="iconCls:'icon-add'" onclick="NewDoc(2);return false;">新增流程</a>-
+   <a href="#" id="btnDel" class="easyui-linkbutton" plain="true" data-options="iconCls:'icon-remove'" onclick="DeleteDoc();return false;">删除流程</a>
+  </div>
+  <table id="dg" class="easyui-datagrid" data-options="toolbar:toptoolbar,fit:true,autoRowHeight:false,remoteSort:true,border:false,rownumbers: true,pagination:true,fitColumns:true,singleSelect:false,multiSort:true,onDblClickRow:RowDblClick,onClickRow:RowClick,pageSize:25,pageList:[20,25,30,40,60],url:'r?wf_num=D_FlowDesignerCom_J002&amp;wf_gridnum=V_FlowDesignerCom_G2&amp;rdm='+Math.random()">
+   <thead>
+    <tr>
+     <th data-options="checkbox:true"></th>
+     <th data-options="field:'icon',width:30,align:'center',formatter:function(v,r){return '&lt;img src=linkey/bpm/images/icons/flow.gif &gt;';}"></th>
+     <th data-options="field:'NodeName',width:150,formatter:showlink">流程名称</th>
+     <th data-options="field:'Processid',width:200">流程ID</th>
+<!--     <th data-options="field:'WF_Appid',width:60">所属应用</th>-->
+     <th data-options="field:'Folderid',width:100">所属分类</th>
+<!--     <th data-options="field:'FormName',width:100,formatter:formatProcessForm">绑定表单</th>-->
+     <th data-options="field:'WF_AddName_CN',width:100">设计者</th>
+     <th data-options="field:'WF_LastModified',width:100">最后更新</th>
+     <th data-options="field:'WF_Version',width:40">版本</th>
+<!--     <th data-options="field:'Status',width:40,formatter:formatStatus">状态</th>
+     <th data-options="field:'StartProcess',width:60,align:'center',formatter:PreviewView">启动</th>-->
+    </tr>
+   </thead>
+  </table>
+  <div id="win"></div> 
+ </body>
+</html>
