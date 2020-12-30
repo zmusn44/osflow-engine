@@ -1,0 +1,5 @@
+osflow-designer为流程图画图工具，将其解压并放到tomcat中即可运行；
+
+flowchart\META-INF\config.properties 可修改相应数据库连接配置
+
+访问地址：http://localhost:8080/osflow-designer/

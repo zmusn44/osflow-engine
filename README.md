@@ -29,7 +29,7 @@
  mysql -u root -p flowchart < E:\flowchart.sql
 ```
 
-2、集成项目引入依赖联科的“osflow-engine-1.0.jar”，可将repository文件夹中的"cn"文件夹复制到Maven仓库根目录，或自行关联依赖，后续会上传到中央仓库。
+2、“osflow-engine-1.0.jar”已经上传到Maven中央仓库，最新版本可将repository文件夹中的"cn"文件夹复制到Maven仓库根目录。
 
 ```xml
 <dependency>
@@ -54,6 +54,17 @@
         </exclusion>
     </exclusions>
 </dependency>
+```
+
+注：maven镜像仓库地址，建议使用阿里云仓库，速度很快。
+
+```
+国外官网地址(慢)：
+https://repo1.maven.org/maven2/
+https://repo2.maven.org/maven2/
+
+国内阿里云同步仓库(快)：
+https://maven.aliyun.com/repository/central
 ```
 
 3、 使用Tomcat部署流程图工具“tools/osflow-designer”，修改osflow-designer\META-INF\config.properties中的数据库配置信息，并确认画图工具可以正常打开。（注：osflow-designer只是用于流程定义，上线后可不必部署。）

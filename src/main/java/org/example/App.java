@@ -11,10 +11,8 @@ import java.sql.SQLException;
 
 /**
  * @author Mr.Yun
- * @Name: 流程引擎运转示例过程
- * @Desc: 一切只为成就更好的您
- * @version: 1.0
- * @Created: 2020/09/24 09:50
+ * 流程引擎运转示例过程
+ * 2020/09/24 09:50
  */
 public class App {
 
@@ -65,7 +63,7 @@ public class App {
     /**
      * 获取用户待办
      *
-     * @param userid
+     * @param userid 用户ID
      */
     public void showToDo(String userid) {
 
@@ -77,8 +75,7 @@ public class App {
 
     /**
      * 获取所有流程信息
-     *
-     * @return 所有流程信息的JSONObject对象
+     * 返回所有流程信息的JSONObject对象
      */
     public void getProcessMsg() {
 
