@@ -1,20 +1,18 @@
 package cn.linkey.workflow.wf;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
 import cn.linkey.orm.dao.Rdb;
 import cn.linkey.orm.doc.Document;
 import cn.linkey.rule.rule.RuleConfig;
 import cn.linkey.workflow.factory.BeanCtx;
-import cn.linkey.workflow.util.DateUtil;
 import cn.linkey.workflow.util.Tools;
 import com.alibaba.fastjson.JSONObject;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 /**
  * 本类为多实例类，可以保证在规则中再使用 Engine newlinkeywf=new Engine(); 这种用法
- * 
+ *
  * @author Administrator
  */
 public class ProcessEngine {
@@ -52,7 +50,7 @@ public class ProcessEngine {
 
     /**
      * 初始化流程引擎
-     * 
+     *
      * @param processid 流程32位唯一id
      * @param docUnid 主文档32位唯一d
      * @param userid 用户当前登录的id
@@ -110,7 +108,7 @@ public class ProcessEngine {
 
     /**
      * 设置一个已经存在的文档对像为流程的主文档
-     * 
+     *
      * @param doc 文档对象
      */
     public void setDocument(Document doc) {
@@ -121,27 +119,27 @@ public class ProcessEngine {
 
     /**
      * 提交流程按照actionid的方式进行流转
-     * 
+     *
      * @param actionid 动作id 有：EndUserTask,GoToFirstNode,GoToPrvNode,GoToPrvUser,GoToArchived,ReturnToPrevUser,StartUser可通过getCurrentActionid()自动获取
      * @param runParams 运行时参数有
-     * 
+     *
      *        <pre>
      *          运行时参数有(通过runParams来传参数可以让引擎不依赖于WEB服务器的request对像)：
      *          WF_NextNodeid   要提交的节点列表 HashSet集合
      *          WF_NextUserList 要提交的用户列表 HashMap集合，包含WF_CopyUserList对像，放在COPYUSER的key中
      *          WF_ReassignmentFlag 转交时是否需要转交者返回的标记1表示不需要2表示需要
      *          WF_SendSms      发送手机短信标记1表示发送，0表示不发送
-     *          WF_RunActionid  提交的动作Actionid，自动由Actionid转入 
-     *          WF_StopNodeType 用来指定需要停止推进的节点类型如：rearEvent ,userTask等 
-     *          WF_AllRouterPath 所有已经指定(已知)的路径集合 
-     *          WF_RunNodeid    WF_RunNodeid运行的节点id 
+     *          WF_RunActionid  提交的动作Actionid，自动由Actionid转入
+     *          WF_StopNodeType 用来指定需要停止推进的节点类型如：rearEvent ,userTask等
+     *          WF_AllRouterPath 所有已经指定(已知)的路径集合
+     *          WF_RunNodeid    WF_RunNodeid运行的节点id
      *          WF_UsePostOwner 强制使用
      *          WF_NextUserList 为启动者标记 runParams示例:
      *          {@code
      *          HashMap<String,String> params=new HashMap String,String>();
      *          params.put("WF_NextUserList","user01,user02");}
      *        </pre>
-     * 
+     *
      * @return 处理结果
      * @throws Exception 流程运行异常
      */
@@ -554,7 +552,7 @@ public class ProcessEngine {
 
     /**
      * 依据前环节推进到当前环节的后继环节中去
-     * 
+     *
      * @param curNodeid 当前所处节点的id
      * @param runParams, runPraram中传入 WF_AllRouterPath 参数可以指定运行的路由集合
      * 返回运行成功后规则中所返回的字符串结果,如果数据驻留在中间环节则返回中间环节的节点名称
@@ -602,7 +600,7 @@ public class ProcessEngine {
 
     /**
      * 执行节点，通过节点类型配置来对节点进行执行
-     * 
+     *
      * @param processid 流程id
      * @param nodeid 要运行的节点
      * @param ruleType 要运行的类型StartRuleNum,EndRuleNum....
@@ -639,7 +637,7 @@ public class ProcessEngine {
 
     /**
      * 获得流程提交后的提示消息
-     * 
+     *
      * @return 提示信息
      */
     public String getRunMsg() {
@@ -687,18 +685,18 @@ public class ProcessEngine {
      * <pre>
      * 检测当前用户是否是在以下几种Action之中:
      *     1.串行审批
-     *     2.会签审批,如果是则只有最后一个用户才可以选择后继环节和用户 
-     *     3.返回给转交者 
+     *     2.会签审批,如果是则只有最后一个用户才可以选择后继环节和用户
+     *     3.返回给转交者
      *     4.返回给回退者
      * </pre>
-     * 
+     *
      * @return 返回数据标识
      * <pre>
      *   可根据标识来获得工作流引擎所需的Actionid参数
-     *   0：最后的用户可以选择后继节点和用户(EndUserTask) 
-     *   1：串行审批(GoToNextSerialUser) 
-     *   2：返回转交者(BackToDeliver) 
-     *   3：表示返回给回退者(BackToReturnUser) 
+     *   0：最后的用户可以选择后继节点和用户(EndUserTask)
+     *   1：串行审批(GoToNextSerialUser)
+     *   2：返回转交者(BackToDeliver)
+     *   3：表示返回给回退者(BackToReturnUser)
      *   4：表示会签中(GoToNextParallelUser)
      * </pre>
      */
@@ -747,7 +745,7 @@ public class ProcessEngine {
 
     /**
      * 存盘驻留中间状态环节的数据,如前置事件，后置事件，网关等 只有节点和用户的提交数据才是有效的中间驻留数据，不存在单独提交用户而没有目标节点的可能性
-     * 
+     *
      * @param processid 流程id
      * @param nodeid 节点id
      * @param docUnid 文档id
@@ -803,7 +801,7 @@ public class ProcessEngine {
 
     /**
      * 获得当前用户所处环节需要加载的子表单列表
-     * 
+     *
      * @param approvalForm true表示包含处理子表单 false表示否
      * @return 返回字符串，多个用逗号分隔
      */
@@ -833,7 +831,7 @@ public class ProcessEngine {
 
     /**
      * 获得当前用户与当前流程会话的Action动作id即linkeywf.Run()中所要求的Actionid
-     * 
+     *
      * @return 当前节点提交的动作引擎
      */
     public String getCurrentActionid() {
@@ -899,7 +897,7 @@ public class ProcessEngine {
 
     /**
      * 获得工作流引擎设置的结束状态节点
-     * 
+     *
      * @return 结束节点
      */
     public String getEndNodeid() {

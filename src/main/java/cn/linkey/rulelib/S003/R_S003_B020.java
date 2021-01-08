@@ -1,7 +1,6 @@
 package cn.linkey.rulelib.S003;
 
 import cn.linkey.orm.dao.Rdb;
-import cn.linkey.orm.dao.impl.RdbImpl;
 import cn.linkey.rule.rule.LinkeyRule;
 import cn.linkey.workflow.factory.BeanCtx;
 import cn.linkey.workflow.util.Tools;

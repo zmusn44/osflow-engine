@@ -1,9 +1,4 @@
 cn.linkey.flowchart.api
-cn.linkey.orm.dao
-cn.linkey.orm.dao.impl
-cn.linkey.orm.doc
-cn.linkey.orm.doc.impl
-cn.linkey.orm.util
 cn.linkey.rule.factory
 cn.linkey.rule.rule
 cn.linkey.rule.util

@@ -38,7 +38,7 @@ public class App {
         Connection conn = app.getConn();
 
         // 打开一个流程（获取表单显示模板和业务数据接口），主要用于前端打开流程
-        app.openProcess("ff0c81f70938404056096810ecfa7baae53b","","bosimao");
+//        app.openProcess("ff0c81f70938404056096810ecfa7baae53b","","bosimao");
 
 
         // 启动或提交一个流程
@@ -54,7 +54,7 @@ public class App {
 
         System.out.println("\n\n\n========================所有用户待办=========================");
         // 获取用户待办列表
-        app.showToDo("");
+        app.showToDo("fupo");
 
         // 关闭数据源
         app.close();
@@ -88,9 +88,6 @@ public class App {
     private Connection getConn() {
         Connection conn = null;
         String driver = "com.mysql.jdbc.Driver";
-//        String url="jdbc:mysql://212.64.55.252:3306/flowchart";
-//        String username="bpm";
-//        String password="bpmuser@pass";
         String url = "jdbc:mysql://127.0.0.1:3306/flowchart";
         String username = "root";
         String password = "1234";
@@ -126,25 +123,25 @@ public class App {
     private void submitProcess() {
         WorkFlow workFlow = new WorkFlowImpl(conn);
         String processid = "433c77e90c28204ed90a0d400d27774580ac";
-        String docUnid = "e57ccd4f03eee04de409a9305b6239ee8f2d"; //流程文档ID
+        String docUnid = ""; //流程文档ID
         String taskid = "";  // 用户任务ID【可选，多实例时则需要传】
-        String action = "GoToPrevUser"; // 【提交动作】 GoToFirstNode、GoToOthers、EndUserTask、BackToDeliver、ReturnToAnyNode、
+        String action = "EndUserTask"; // 【提交动作】 GoToFirstNode、GoToOthers、EndUserTask、BackToDeliver、ReturnToAnyNode、
         // BackToReturnUser、GoToAnyNode、GoToPrevUser、GoToPrevNode、GoToArchived、GoToNextParallelUser、GoToNextNode
-        String currentNodeid = "T00002"; // 当前节点
-        String nextNodeid = "";   // 下一个节点
-        String nextUserList = ""; // 下一个审批处理人ID
+        String currentNodeid = ""; // 当前节点
+        String nextNodeid = "T00002";   // 下一个节点
+        String nextUserList = "fupo"; // 下一个审批处理人ID
         String copyUserList = "";  // 传阅用户ID
-        String userid = "hanfeizi";
-        String remark = "hanfeizi返回上一用户";
+        String userid = "qionggui";
+        String remark = "qg提交给fp";
         String isBackFlag = ""; // 标记为回退，当为回退任意环节时，isBackFlag值可以为2，表示回退后需要直接返回给回退者
         String reassignmentFlag = ""; // 转交时是否需要转交者返回的标记1表示不需要2表示需要
         JSONObject maindata = new JSONObject();
 
         // 表单数据
-//        maindata.put("name","lili");
-//        maindata.put("phone","7758258");
-//        maindata.put("sex","1");
-//        maindata.put("age","22");
+        maindata.put("name","lili");
+        maindata.put("phone","7758258");
+        maindata.put("sex","1");
+        maindata.put("age","22");
 
         String msg = workFlow.runProcess(processid, docUnid, taskid, action, currentNodeid,
                 nextNodeid, nextUserList, copyUserList, userid, remark, isBackFlag, reassignmentFlag, maindata);

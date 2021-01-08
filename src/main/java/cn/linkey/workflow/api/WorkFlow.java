@@ -1,12 +1,7 @@
 package cn.linkey.workflow.api;
 
-import cn.linkey.orm.doc.Document;
-import cn.linkey.orm.doc.impl.DocumentsUtil;
-import cn.linkey.workflow.factory.BeanCtx;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-
-import java.util.LinkedHashSet;
 
 /**
  * @author Mr.Yun

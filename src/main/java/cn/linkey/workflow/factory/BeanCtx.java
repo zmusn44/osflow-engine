@@ -9,7 +9,7 @@ import cn.linkey.orm.doc.impl.DocumentImpl;
 import cn.linkey.rule.factory.BeanServer;
 import cn.linkey.rule.rule.EventEngine;
 import cn.linkey.rule.rule.ExecuteEngine;
-import cn.linkey.workflow.util.Tools;
+import cn.linkey.orm.util.Tools;
 import cn.linkey.workflow.wf.ProcessEngine;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * <p>而对于规则和用户自定义的类则不进行缓存 BeanCtx.init("admin",null,null);<br>
  * 这个需要在过虑器中进行初始化BeanCtx.close(); 本类为静态单例类。
  */
-final public class BeanCtx {
+public class BeanCtx {
 	private static ThreadLocal<ThreadContext> context = new ThreadLocal<ThreadContext>(); // 线程全局对像,通过get
 	private static Logger logger = LoggerFactory.getLogger(BeanCtx.class);
 
@@ -77,10 +77,16 @@ final public class BeanCtx {
 	 */
 	public static void setConnection(Connection conn) {
 		getContext().setConnection(conn);
+
+		// 将对象设置为存储引擎
+		cn.linkey.orm.factory.BeanCtx.setConnection(conn);
 	}
 
 	public static void setRdb(Rdb rdb) {
 		getContext().setRdb(rdb);
+
+		// 将对象设置为存储引擎
+		cn.linkey.orm.factory.BeanCtx.setRdb(rdb);
 	}
 
 	public static Rdb getRdb() {

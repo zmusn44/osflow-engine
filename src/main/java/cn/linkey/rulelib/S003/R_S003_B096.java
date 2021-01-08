@@ -2,7 +2,7 @@ package cn.linkey.rulelib.S003;
 
 import java.util.*;
 import cn.linkey.orm.doc.*;
-import cn.linkey.workflow.factory.*;
+import cn.linkey.workflow.factory.BeanCtx;
 import cn.linkey.workflow.wf.*;
 import cn.linkey.rule.rule.LinkeyRule;
 /**
