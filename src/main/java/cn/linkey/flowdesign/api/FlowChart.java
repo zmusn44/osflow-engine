@@ -1,16 +1,17 @@
-package cn.linkey.flowchart.api;
+package cn.linkey.flowdesign.api;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 /**
- * @author Mr.Yun
- * 流程图统一接口，所有与流程图相关的内容前后端处理，都将经过本接口
- * 一切只为成就更好的您
- *  1.0
- * 2020/07/31 13:06
+ * @author Mr.Yun / alibao
+ * @Name: 流程图统一接口，所有与流程图相关的内容前后端处理，都将经过本接口
+ * @Desc: 一切只为成就更好的您
+ * @version: 1.0
+ * @Created: 2020/07/31 13:06
  */
 public interface FlowChart {
+
 
     /**
      * 保存流程图模型数据接口
@@ -20,6 +21,13 @@ public interface FlowChart {
      * @return {"status","0/1","msg":"提示信息"}
      */
     public JSONObject saveFlowChartGraphic(String processid, String flowJSON);
+
+    /**
+     * 搜索流程
+     * @param searchStr 搜索字段，为空时返回所有流程
+     * @return 返回搜索或所有流程信息
+     */
+    public JSONObject getProcessList(String searchStr);
 
     /**
      * 获取流程图模型数据接口
@@ -53,18 +61,6 @@ public interface FlowChart {
     public JSONObject saveFlowChartModByNodeType(String processid, String nodeid, String extNodeType, JSONObject formParmes);
 
     /**
-     * 获取各节点类型的统一请求接口，这里依据节点id进行类另和保存表的区分
-     *  节点类型包含：参考saveFlowChartModByNodeType中的内容
-     *  使用nodeid的开始字符，可以决定保存的表名，再使用流程id，两者做为条件，可以找到表中唯一的一条记录
-     *  请注意：获取数据时，需要将XmlData大字段的内容一并获取，并反回，这里建议使用ORM存储引擎中的Document对象进行处理
-     * 前端获得数据后，依据formdata的内容，结合相应的表单字段，设置进专表单中进行展示显示历史保存配置。
-     * @param processid 流程id，必须
-     * @param nodeid 节点id，必须（节点id，为前端流程图设计器生成）
-     * @return {"status","0/1","msg":"提示信息","formdata":{"field1":"字段1","field2":"字段1"......}}
-     */
-    public JSONObject getFlowChartModByNodeType(String processid, String nodeid);
-
-    /**
      * 保存各节点类型的事件统一请求接口，事件统一保存到表 BPM_EngineEventConfig 中
      *   筛选条件：流程id AND 节点id
      *   处理逻辑：保存时，只处理表中符合筛选条件的所有行内容，以及前端传入的eventRows行内容。
@@ -76,6 +72,20 @@ public interface FlowChart {
      * @return {"status","0/1","msg":"提示信息"}
      */
     public JSONObject saveFlowChartEventByNodeType(String processid, String nodeid, JSONArray eventRows);
+
+
+    /**
+     * 获取各节点类型的统一请求接口，这里依据节点id进行类另和保存表的区分
+     *  节点类型包含：参考saveFlowChartModByNodeType中的内容
+     *  使用nodeid的开始字符，可以决定保存的表名，再使用流程id，两者做为条件，可以找到表中唯一的一条记录
+     *  请注意：获取数据时，需要将XmlData大字段的内容一并获取，并反回，这里建议使用ORM存储引擎中的Document对象进行处理
+     * 前端获得数据后，依据formdata的内容，结合相应的表单字段，设置进专表单中进行展示显示历史保存配置。
+     * @param processid 流程id，必须
+     * @param nodeid 节点id，必须（节点id，为前端流程图设计器生成）
+     * @return {"status","0/1","msg":"提示信息","formdata":{"field1":"字段1","field2":"字段1"......}}
+     */
+    public JSONObject getFlowChartModByNodeType(String processid, String nodeid);
+
 
     /**
      * 获取各节点类型的事件统一请求接口，事件统一到表 BPM_EngineEventConfig 中依据筛选条件进行获取
@@ -91,25 +101,29 @@ public interface FlowChart {
     public JSONObject getFlowChartEventByNodeType(String processid, String nodeid);
 
     /**
-     * 保存或更新人工活动节点配置的发送邮件信息到数据库表 BPM_MailConfig
-     *   筛选条件：流程id AND 节点id
-     *  注意：这里，如果是新建的数据，则insert一条，如果数据已经存在（WF_OrUnid判断）则进行update
+     * 表单字段配置
      * @param processid 流程id，必须
-     * @param nodeid 节点id，必须（节点id，为前端流程图设计器生成）
-     * @param formParmes 节点邮件配置表单F_S002_A025，中的所有字段信息组成JSON（包含 WF_OrUnid，新建时为空）
-     * @return {"status","0/1","msg":"提示信息"}
+     * @return 表单字段配置JSON
      */
-    public JSONObject saveFlowChartMailConfigByNodeType(String processid, String nodeid, JSONObject formParmes);
+    public JSONObject getFormConfig(String processid);
 
     /**
-     * 删除人工活动节点配置的发送邮件信息 表BPM_MailConfig
-     *   筛选条件：流程id AND 节点id
-     * @param processid 流程id，必须
-     * @param nodeid 节点id，必须（节点id，为前端流程图设计器生成）
-     * @param docUnidList 需要删除行的 WF_OrUnid 键的值，多条记录使用逗号分隔
+     * 删除流程事件
+     * @param processid 流程ID
+     * @param nodeid     节点类型
+     * @param docUnidList  删除的记录id，多个以逗号隔开
+     * @return 处理结果 "ok", "成功删除"+i+"条记录！"
+     */
+    public JSONObject deleteFlowChartEventByNodeType(String processid, String nodeid, String docUnidList );
+
+    /**
+     * 设置表单字段配置
+     * @param formConfig 表单字段配置JSON字符串
+     * @param processid  对应流程ID
      * @return {"status","0/1","msg":"提示信息"}
      */
-    public JSONObject deleteFlowChartMailConfigByNodeType(String processid, String nodeid, String docUnidList);
+    public JSONObject setFormConfig(String formConfig, String processid);
+
 
     /**
      * 获取人工活动节点配置的发送邮件信息 表BPM_MailConfig
@@ -124,6 +138,39 @@ public interface FlowChart {
 
 
     /**
+     * 删除流程设计
+     * @param processids 流程ID(用逗号","隔开)
+     * @return 返回删除结果 "ok", "成功删除"+i+"条记录！"
+     */
+    public JSONObject deleteProcessList(String processids);
+
+
+    /**
+     *
+     * 获取节点操作按钮配置
+     * @param processid  流程ID
+     * @param nodeid     节点ID
+     * @return 操作按钮配置JSON
+     */
+    public JSONObject getButtonConfig(String processid, String nodeid);
+
+
+    /**
+     * 流程保存前操作，如缺省保存，删除节点，校验
+     * @param processid 流程ID
+     * @param nodeid    节点ID
+     * @param nodeList  节点ID的字符串，逗号隔开
+     * @param action    CheckNodeAttr、SaveAllDefaultNode、DeleteNode
+     * @param nodeType   节点类型
+     * @param startNodeid  开始节点ID
+     * @param endNodeid    结束节点ID
+     * @return 操作结果
+     */
+    public JSONObject actionFlowChartGraphic(String processid, String nodeid, String nodeList, String action, String nodeType, String startNodeid, String endNodeid);
+
+
+
+    /**
      * 获取人工活动节点配置的发送邮件信息 表BPM_MailConfig
      *   筛选条件：流程id AND 节点id
      * @param unid 数据id，必须
@@ -134,48 +181,34 @@ public interface FlowChart {
     public JSONObject getFlowChartMailConfigByUnid(String unid);
 
     /**
-     * 流程操作规则
-     * @param processid 流程ID
-     * @param nodeid  节点ID
-     * @param nodeList 节点List，用于CheckNodeAttr
-     * @param action 动作引擎
-     * @param nodeType 节点类型
-     * @param startNodeid 开始节点
-     * @param endNodeid 结束节点
-     * @return 返回操作结果
-     */
-    public JSONObject actionFlowChartGraphic(String processid, String nodeid, String nodeList, String action,String nodeType,String startNodeid,String endNodeid);
-
-    /**
-     * 查询流程列表
-     * @param searchStr 搜索字符串
-     * @return 返回流程JSON
-     */
-    public JSONObject getProcessList(String searchStr);
-
-    /**
-     * 删除流程
-     * @param processids 流程ID(用逗号","隔开)
-     * @return 返回操作结果
-     */
-    public JSONObject deleteProcessList(String processids);
-
-    /**
-     * 表单字段配置
-     * add by alibao 202010
-     * @param processid 流程ID
-     * @return 表单字段配置JSON
-     */
-    public JSONObject getFormConfig(String processid);
-
-    /**
-     * 设置表单字段配置
-     * add by alibao 202010
-     * @param formConfig 表单字段配置JSON字符串
-     * @param processid  对应流程ID
+     * 保存或更新人工活动节点配置的发送邮件信息到数据库表 BPM_MailConfig
+     *   筛选条件：流程id AND 节点id
+     *  注意：这里，如果是新建的数据，则insert一条，如果数据已经存在（WF_OrUnid判断）则进行update
+     * @param processid 流程id，必须
+     * @param nodeid 节点id，必须（节点id，为前端流程图设计器生成）
+     * @param formParmes 节点邮件配置表单F_S002_A025，中的所有字段信息组成JSON（包含 WF_OrUnid，新建时为空）
      * @return {"status","0/1","msg":"提示信息"}
      */
-    public JSONObject setFormConfig(String formConfig,String processid);
+    public JSONObject saveFlowChartMailConfigByNodeType(String processid, String nodeid, JSONObject formParmes);
+
+    /**
+     * 删除人工活动节点配置的发送邮件信息 表BPM_MailConfig
+     *   筛选条件：流程id AND 节点id
+     * @param docUnidList 需要删除行的 WF_OrUnid 键的值，多条记录使用逗号分隔
+     * @return {"status","0/1","msg":"提示信息"}
+     */
+    public JSONObject deleteFlowChartMailConfigByNodeType(String docUnidList);
+
+
+    /**
+     * 配置节点操作按钮
+     * @param buttonConfig 节点操作按钮配置
+     * @param processid  对应流程ID
+     * @param nodeid      对应用节点id
+     * @return {"status","0/1","msg":"提示信息"}
+     */
+    public JSONObject setButtonConfig(String buttonConfig, String processid, String nodeid);
+
 
     /**
      * 通用删除表单记录方法
@@ -187,9 +220,19 @@ public interface FlowChart {
     public JSONObject delCommonTableRows(String tableName, String wforunid);
 
 
+
     /**
-     * 获得WF_Orunid
-     * @return 返回唯一ID
+     * 获得所有节点按钮的动作信息
+     * [{"ActionName":"提交下一会签用户","Actionid":"GoToNextParallelUser"},{"ActionName":"收回文档","Actionid":"Undo"},{"ActionName":"结束当前环节并推进到下一环节","Actionid":"GoToNextNode"},{"ActionName":"回退首环节","Actionid":"GoToFirstNode"},{"ActionName":"尝试结束子流程节点","Actionid":"EndSubProcessNode"},{"ActionName":"回退上一环节","Actionid":"GoToPrevNode"},{"ActionName":"暂停","Actionid":"Pause"},{"ActionName":"标记为阅","Actionid":"EndCopyTo"},{"ActionName":"后台启动用户任务","Actionid":"StartUser"},{"ActionName":"办理完成","Actionid":"EndUserTask"},{"ActionName":"转他人处理","Actionid":"GoToOthers"},{"ActionName":"归档","Actionid":"GoToArchived"},{"ActionName":"后台结束用户任务","Actionid":"EndUser"},{"ActionName":"提交任意环节","Actionid":"GoToAnyNode"},{"ActionName":"回退上一用户","Actionid":"GoToPrevUser"},{"ActionName":"后台结束节点","Actionid":"EndNode"},{"ActionName":"回退任意环节","Actionid":"ReturnToAnyNode"},{"ActionName":"返回给转交者","Actionid":"BackToDeliver"},{"ActionName":"恢复","Actionid":"UnPause"},{"ActionName":"提交下一串行用户","Actionid":"GoToNextSerialUser"},{"ActionName":"自动运行","Actionid":"AutoRun"},{"ActionName":"返回给回退者","Actionid":"BackToReturnUser"},{"ActionName":"传阅用户","Actionid":"CopyTo"},{"ActionName":"同步任务","Actionid":"SyncUserTask"}]
+     * @return 返回所有按钮动作 JSON信息
+     */
+    public JSONArray getALLActionConfig();
+
+    /**
+     * 新增流程id
+     * @return 返回新创建的流程ID
      */
     public JSONObject getUnid();
+
+
 }

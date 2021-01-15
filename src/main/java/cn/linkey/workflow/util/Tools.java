@@ -628,4 +628,39 @@ public class Tools {
 		 */
 	}
 
+	/**
+	 * 文档数组对像转为json字符串
+	 *
+	 * @param dc 文档集合使用Rdb.GetAllDocumentsBySql()获得
+	 * @param key 是否需要使用key关键字进行输出如传入rows输出结果为 {"rows":[{json1},{json2}]} 否则传入空值标准输出为 [{json1},{json2}]
+	 * @param useTableConfig true 表示使用配置表中的字段信息进行输出,false 表示使用数据库表中的字段信息进行输出
+	 * @return 返回json字符串，格式由是否有key决定
+	 */
+	public static String dc2json(Document dc[], String key, boolean useTableConfig) {
+		StringBuilder jsonStr = new StringBuilder();
+		if (isBlank(key)) {
+			jsonStr.append("[");
+		}
+		else {
+			jsonStr.append("{\"" + key + "\":[");
+		}
+		int i = 0;
+		for (Document doc : dc) {
+			if (i == 0) {
+				i = 1;
+			}
+			else {
+				jsonStr.append(",");
+			}
+			jsonStr.append(doc.toJson(useTableConfig));
+		}
+		if (isBlank(key)) {
+			jsonStr.append("]");
+		}
+		else {
+			jsonStr.append("]}");
+		}
+		return jsonStr.toString();
+	}
+
 }
