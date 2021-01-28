@@ -1,0 +1,10 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Fri Jan 08 16:24:38 CST 2021
+osflow-engine-1.1.0.pom>=
+osflow-engine-1.1.0-javadoc.jar.asc>=
+osflow-engine-1.1.0-javadoc.jar>=
+osflow-engine-1.1.0.pom.asc>=
+osflow-engine-1.1.0.jar.asc>=
+osflow-engine-1.1.0-sources.jar.asc>=
+osflow-engine-1.1.0-sources.jar>=
+osflow-engine-1.1.0.jar>=

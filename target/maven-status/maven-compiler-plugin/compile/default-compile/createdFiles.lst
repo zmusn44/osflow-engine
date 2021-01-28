@@ -11,6 +11,7 @@ cn\linkey\workflow\api\WorkFlowImpl.class
 cn\linkey\rule\util\JdbcUtil.class
 cn\linkey\rulelib\S003\R_S003_B017.class
 cn\linkey\rulelib\S003\R_S003_B007.class
+cn\linkey\rulelib\Event\R_Event_P002.class
 cn\linkey\rulelib\S003\R_S003_B057.class
 org\example\App.class
 cn\linkey\workflow\wf\RemarkImpl.class
@@ -24,7 +25,6 @@ cn\linkey\rulelib\S003\R_S003_B022.class
 cn\linkey\workflow\lang\Engine_zh_CN.class
 cn\linkey\rulelib\Event\R_Event_P001.class
 cn\linkey\rulelib\S003\R_S003_B016.class
-cn\linkey\flowchart\api\FlowchartImp.class
 cn\linkey\rule\factory\LkJavaFileObject.class
 cn\linkey\rulelib\S003\R_S003_B045.class
 cn\linkey\rulelib\S003\R_S003_B050.class
@@ -50,6 +50,7 @@ cn\linkey\rulelib\S003\R_S003_B021.class
 cn\linkey\rulelib\S003\R_S003_B002.class
 cn\linkey\rulelib\S003\R_S003_B074.class
 cn\linkey\rule\factory\LkClassFileManager.class
+cn\linkey\flowdesign\api\FlowchartImp.class
 cn\linkey\workflow\lang\Common_zh_CN.class
 cn\linkey\rulelib\S003\R_S003_B044.class
 cn\linkey\rulelib\S003\R_S003_B054.class
@@ -57,7 +58,6 @@ cn\linkey\workflow\lang\Designer_zh_CN.class
 cn\linkey\workflow\util\Tools.class
 cn\linkey\workflow\wf\NodeUser.class
 cn\linkey\workflow\wf\MainDoc.class
-cn\linkey\flowchart\api\FlowChart.class
 cn\linkey\rulelib\S003\R_S003_B072.class
 cn\linkey\rulelib\S003\R_S003_B080.class
 cn\linkey\workflow\wf\NodeControlPoint.class
@@ -69,6 +69,7 @@ cn\linkey\workflow\wf\ModNode.class
 cn\linkey\rulelib\S003\R_S003_B046.class
 cn\linkey\rule\rule\ExecuteEngine.class
 cn\linkey\rulelib\S003\R_S003_B055.class
+cn\linkey\flowdesign\api\FlowChart.class
 cn\linkey\rulelib\S003\R_S003_B020.class
 cn\linkey\workflow\wf\InsNode.class
 cn\linkey\rulelib\S003\R_S003_B003.class

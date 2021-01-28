@@ -251,8 +251,8 @@ public class WorkFlowImpl implements WorkFlow {
             (select i.PROCESSID,(select NodeName from bpm_modprocesslist where Processid = i.PROCESSID) PROCESSNAME,i.USERID,'' NEXTUSERLIST, i.Nodeid,i.NODENAME,'' NEXTNODENAME, i.StartTime,i.EndTime,'' REMARK from BPM_InsUserList i where i.DocUnid='7662dfff0689804aac0b2fa098ab515968f1' and i.Status='Current' order by i.StartTime)
             * */
 
-            String sql = "(select PROCESSID,PROCESSNAME,USERID, NEXTUSERLIST,Nodeid,NODENAME,NEXTNODENAME,StartTime,EndTime,REMARK from BPM_AllRemarkList  where DocUnid='" + docUnid
-                    + "' order by EndTime) union all (select i.PROCESSID,(select NodeName from bpm_modprocesslist where Processid = i.PROCESSID) PROCESSNAME,i.USERID,'' NEXTUSERLIST, i.Nodeid,i.NODENAME,'' NEXTNODENAME, i.StartTime,i.EndTime,'' REMARK from BPM_InsUserList i where i.DocUnid='" + docUnid
+            String sql = "(select PROCESSID,PROCESSNAME,USERID, NEXTUSERLIST,Nodeid,NODENAME,NEXTNODENAME,ACTIONID,StartTime,EndTime,REMARK from BPM_AllRemarkList  where DocUnid='" + docUnid
+                    + "' order by EndTime) union all (select i.PROCESSID,(select NodeName from bpm_modprocesslist where Processid = i.PROCESSID) PROCESSNAME,i.USERID,'' NEXTUSERLIST, i.Nodeid,i.NODENAME,'' NEXTNODENAME, '',i.StartTime,i.EndTime,'' REMARK from BPM_InsUserList i where i.DocUnid='" + docUnid
                     + "' and i.Status='Current' order by i.StartTime)";
 
             LinkedHashSet<Document> docs = BeanCtx.getRdb().getAllDocumentsSetBySql("BPM_AllRemarkList", sql);

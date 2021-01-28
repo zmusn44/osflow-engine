@@ -17,6 +17,11 @@
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="io.spring.repo.maven.release" />
+      <option name="name" value="io.spring.repo.maven.release" />
+      <option name="url" value="http://repo.spring.io/release/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="jboss.community" />
       <option name="name" value="JBoss Community repository" />
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
@@ -25,6 +30,16 @@
       <option name="id" value="central" />
       <option name="name" value="Central Repository" />
       <option name="url" value="https://maven.aliyun.com/repository/central" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="https://repo1.maven.org/maven2/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="org.springframework.maven.milestone" />
+      <option name="name" value="spring-framework-repo" />
+      <option name="url" value="http://maven.springframework.org/milestone" />
     </remote-repository>
   </component>
 </project>

@@ -7,7 +7,33 @@
     <groupId>cn.linkey</groupId>
     <artifactId>osflow-engine</artifactId>
     <version>1.0</version>
+    <description>独立的流程引擎jar</description>
     <name>osflow-engine</name>
+    <url>https://gitee.com/openEA/osflow-engine</url>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <!--输入在sonatype创建的账户和联系邮箱 -->
+            <name>alibao</name>
+            <email>walkwithdream@163.com</email>
+            <organization>openEA</organization>
+            <organizationUrl>https://gitee.com/openEA</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://gitee.com/openEA/osflow-engine.git</url>
+    </scm>
+
+
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
@@ -111,7 +137,43 @@
 
     <build>
         <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+
             <plugins>
+
+                <!--配置生成Javadoc包-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                        <charset>UTF-8</charset>
+                        <docencoding>UTF-8</docencoding>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!--配置生成源码包-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
                 <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
@@ -121,10 +183,6 @@
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.0.2</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.0</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -151,44 +209,63 @@
                     <artifactId>maven-project-info-reports-plugin</artifactId>
                     <version>3.0.0</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.5.1</version>
+                </plugin>
+
+                <!--将组件部署到OSSRH并将其发布到Central Repository-->
+                <!--                <plugin>
+                                    <groupId>org.sonatype.plugins</groupId>
+                                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                                    <version>1.6.8</version>
+                                    <extensions>true</extensions>
+                                    <configuration>
+                                        <serverId>ossrh</serverId>
+                                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                                    </configuration>
+                                </plugin>-->
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.6</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                            <configuration>
+                                <executable>gpg</executable>
+                                <homedir>${gpg.homedir}</homedir>
+                                <keyname>${gpg.keyname}</keyname>
+                                <passphrase>${gpg.passphrase}</passphrase>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
             </plugins>
         </pluginManagement>
+
     </build>
-    <!--    <build>-->
-    <!--        <finalName>app</finalName>-->
-    <!--        <plugins>-->
-    <!--            <plugin>-->
-    <!--                <groupId>org.springframework.boot</groupId>-->
-    <!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-    <!--            </plugin>-->
-    <!--            &lt;!&ndash; docker的maven插件，官网 https://github.com/spotify/docker-maven-plugin &ndash;&gt;-->
-    <!--            <plugin>-->
-    <!--                <groupId>com.spotify</groupId>-->
-    <!--                <artifactId>docker-maven-plugin</artifactId>-->
-    <!--                <version>0.4.13</version>-->
-    <!--                <configuration>-->
-    <!--                    <imageName>10.90.14.10:5000/eos/${project.artifactId}:${project.version}</imageName>-->
-    <!--                    &lt;!&ndash;docker pull hub.eos.h3c.com/base/openjdk:11-jre&ndash;&gt;-->
-    <!--                    <baseImage>hub.eos.h3c.com/base/openjdk:11-jre</baseImage>-->
-    <!--                    <entryPoint>["java", "-jar","/${project.build.finalName}.jar"]</entryPoint>-->
-    <!--                    <skipDockerBuild>false</skipDockerBuild>-->
-    <!--                    <resources>-->
-    <!--                        <resource>-->
-    <!--                            <targetPath>/</targetPath>-->
-    <!--                            <directory>${project.build.directory}</directory>-->
-    <!--                            <include>${project.build.finalName}.jar</include>-->
-    <!--                        </resource>-->
-    <!--                    </resources>-->
-    <!--                    <dockerHost>http://10.90.14.10:2375</dockerHost>-->
-    <!--                </configuration>-->
-    <!--                <dependencies>-->
-    <!--                    <dependency>-->
-    <!--                        <groupId>javax.activation</groupId>-->
-    <!--                        <artifactId>activation</artifactId>-->
-    <!--                        <version>1.1.1</version>-->
-    <!--                    </dependency>-->
-    <!--                </dependencies>-->
-    <!--            </plugin>-->
-    <!--        </plugins>-->
-    <!--    </build>-->
+
+
+
+
+    <distributionManagement>
+        <repository>
+            <id>ossrh</id><!--与settings.xml的server.id保持一致-->
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+        <snapshotRepository>
+            <id>ossrh</id><!--与settings.xml的server.id保持一致-->
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>

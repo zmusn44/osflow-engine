@@ -1,5 +1,7 @@
 package org.example;
 
+import cn.linkey.flowdesign.api.FlowChart;
+import cn.linkey.flowdesign.api.FlowchartImp;
 import cn.linkey.workflow.api.WorkFlow;
 import cn.linkey.workflow.api.WorkFlowImpl;
 import com.alibaba.fastjson.JSONArray;
@@ -52,9 +54,13 @@ public class App {
 //        app.getProcessMsg();
 
 
-        System.out.println("\n\n\n========================所有用户待办=========================");
+//        System.out.println("\n\n\n========================所有用户待办=========================");
         // 获取用户待办列表
-        app.showToDo("fupo");
+//        app.showToDo("fupo");
+
+
+        // 测试Flowchart接口
+        app.testFlowchartIm();
 
         // 关闭数据源
         app.close();
@@ -147,6 +153,19 @@ public class App {
                 nextNodeid, nextUserList, copyUserList, userid, remark, isBackFlag, reassignmentFlag, maindata);
         System.out.println("流程提交结果：" + msg);
     }
+
+    /**
+     * 测试Flowchart接口
+     */
+    private void testFlowchartIm(){
+        FlowChart imp = new FlowchartImp();
+        WorkFlow workFlow = new WorkFlowImpl(conn);
+
+//        imp.updateEventRuleConfig();
+          imp.getRuleTree();
+
+    }
+
 
 
     private void close() {
