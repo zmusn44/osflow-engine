@@ -841,19 +841,20 @@ public class ProcessEngine {
         int canNextNodeFlag = canSelectNodeAndUser(); //获得是否可以选择后继环节返回0表示可以
         String actionid = "";
         if (canNextNodeFlag == 0) {
-            actionid = "EndUserTask";
+
+            actionid = "[{label: \"办理完成\", value: \"EndUserTask\"}]";
         }
         else if (canNextNodeFlag == 1) {
-            actionid = "GoToNextSerialUser";
+            actionid = "[{label: \"提交下一串行用户\", value: \"GoToNextSerialUser\"}]";
         }
         else if (canNextNodeFlag == 2) {
-            actionid = "BackToDeliver";
+            actionid = "[{label: \"返回给转交者\", value: \"BackToDeliver\"}]";
         }
         else if (canNextNodeFlag == 3) {
-            actionid = "BackToReturnUser";
+            actionid = "[{label: \"返回给回退者\", value: \"BackToReturnUser\"}]";
         }
         else if (canNextNodeFlag == 4) {
-            actionid = "GoToNextParallelUser";
+            actionid = "[{label: \"提交下一会签用户\", value: \"GoToNextParallelUser\"}]";
         }
         return actionid;
     }

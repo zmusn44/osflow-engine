@@ -443,8 +443,11 @@ public class WorkFlowImpl implements WorkFlow {
     public JSONArray getProcessMsg(){
 
         String sql = "select * from BPM_ModProcessList order by WF_DocCreated desc";
-        LinkedHashSet<Document> docSets = BeanCtx.getRdb().getAllDocumentsSetBySql(sql);
-        JSONArray processMsg = JSONArray.parseArray(DocumentsUtil.dc2json(docSets, ""));
+//        LinkedHashSet<Document> docSets = BeanCtx.getRdb().getAllDocumentsSetBySql(sql);
+//        JSONArray processMsg = JSONArray.parseArray(DocumentsUtil.dc2json(docSets, ""));
+
+        Document[] docs = BeanCtx.getRdb().getAllDocumentsBySql(sql);
+        JSONArray processMsg = JSONArray.parseArray(DocumentsUtil.dc2json(docs, ""));
 
         return processMsg;
     }

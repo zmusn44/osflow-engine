@@ -51,7 +51,7 @@ public class RuleConfig {
      * @return 返回所有事件规则中配置所对应的规则编号集合
      */
     public Document[] getEventConfig(String processid, String eventid, String nodeid) {
-        System.out.println("eventid: " + eventid + "    nodeid: " + nodeid);
+//        System.out.println("eventid: " + eventid + "    nodeid: " + nodeid);
         String sql = "select RuleNum,Params from BPM_EngineEventConfig where  (processid='" + processid + "' or processid='*') and (nodeid='" + nodeid + "' or nodeid='*') and eventid='" + eventid
                 + "' order by SortNum";
 
